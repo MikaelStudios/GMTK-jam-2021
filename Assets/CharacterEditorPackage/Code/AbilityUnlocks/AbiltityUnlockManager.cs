@@ -32,6 +32,16 @@ public class AbiltityUnlockManager : MonoBehaviour
         updateAbilities();
     }
 
+    public bool RemoveRandomAbilityClass()
+    {
+        if(m_currentAbilities.Count == 0)
+            return false; // No more abilities could be removed
+        System.Random rng = new System.Random();
+        int idx = rng.Next(m_currentAbilities.Count);
+        RemoveAbilityClass(m_currentAbilities[idx]);
+        return true;
+    }
+
     public void SetColor(Color m_color)
     {
         SpriteRenderer spriteRenderer = transform.Find("SpriteTransformBase").transform.Find("SpriteAnimator").GetComponent<SpriteRenderer>();
@@ -54,6 +64,9 @@ public class AbiltityUnlockManager : MonoBehaviour
             {
                 abilityManager.ApplyAbilityUnlockList(rule.abilityUnlock, true);
             }
+        }
+        if(m_currentAbilities.Count == 0) {
+            SetColor(Color.white);
         }
     }
 
