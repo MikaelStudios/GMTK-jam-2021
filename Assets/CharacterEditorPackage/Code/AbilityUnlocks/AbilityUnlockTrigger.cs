@@ -17,15 +17,5 @@ public class AbilityUnlockTrigger : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
-
-        Renderer renderer = GetComponent<Renderer>();
-        if (!renderer) return;
-
-        Color color = renderer.material.color;
-        print(color.ToString());
-        SpriteRenderer spriteRenderer = a_Collider.transform.Find("SpriteTransformBase").transform.Find("SpriteAnimator").GetComponent<SpriteRenderer>();
-        spriteRenderer.color = color;
-        print(spriteRenderer.color.ToString());
-        unlockManager.AddColor(m_abilityClass);
     }
 }

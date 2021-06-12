@@ -40,12 +40,17 @@ public class AbilityModuleManager : MonoBehaviour {
 
     public void ApplyAbilityUnlockList(AbilityUnlockList a_List)
     {
+        ApplyAbilityUnlockList(a_List, false);
+    }
+
+    public void ApplyAbilityUnlockList(AbilityUnlockList a_List, bool reverseLock)
+    {
         for (int i = 0; i < a_List.m_List.Length; i ++)
         {
             AbilityModule module = GetModuleWithName(a_List.m_List[i].m_AbilityName);
             if (module != null)
             {
-                module.SetLocked(a_List.m_List[i].m_Lock);
+                module.SetLocked(a_List.m_List[i].m_Lock ^ reverseLock);
             }
             else
             {
