@@ -11,6 +11,7 @@ public class InSceneLevelSwitcher : MonoBehaviour {
     public static event OnLevelStartEvent OnLevelStart;
     [SerializeField] CharacterControllerBase m_Character = null;
     [SerializeField] InSceneLevel[] m_Levels = null;
+    [SerializeField] bool m_ShowButtons = false;
     [SerializeField] int m_ButtonSize = 0;
     [SerializeField] int m_ButtonsPerRow = 0;
     [SerializeField] Transform m_Camera = null;
@@ -19,10 +20,10 @@ public class InSceneLevelSwitcher : MonoBehaviour {
     static InSceneLevelSwitcher g_InSceneLevelSwitcher;
     public static InSceneLevelSwitcher Get()
     {
-        if (g_InSceneLevelSwitcher == null)
+        if (!g_InSceneLevelSwitcher)
         {
             g_InSceneLevelSwitcher = FindObjectOfType<InSceneLevelSwitcher>();
-            if (g_InSceneLevelSwitcher == null)
+            if (!g_InSceneLevelSwitcher)
             {
                 return null;
             }
@@ -37,6 +38,8 @@ public class InSceneLevelSwitcher : MonoBehaviour {
 
     void OnGUI()
     {
+        if(!m_ShowButtons)
+            return;
         for (int i = 0; i < m_Levels.Length; i ++)
         {
             int xIndex = (i) % (m_ButtonsPerRow);
@@ -71,12 +74,14 @@ public class InSceneLevelSwitcher : MonoBehaviour {
         StartLevel(m_CurrentIndex);
         CorrectCamera();
     }
+    
     void CorrectCamera()
     {
         Vector3 diff = m_Character.transform.position - m_Camera.transform.position;
         diff.z = 0;
         m_Camera.transform.position += diff;
     }
+
     void StartLevel(int a_Index)
     {
         if (a_Index >= m_Levels.Length)

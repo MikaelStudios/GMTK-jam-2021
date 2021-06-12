@@ -4,7 +4,7 @@ public class AbilityUnlockTrigger : MonoBehaviour
 {
     [SerializeField] AbilityUnlockList m_List = null;
     [SerializeField] bool m_DisableAfterTriggering = false;
-    [SerializeField] AbilityClass m_abilityClass;
+    
     void OnTriggerEnter(Collider a_Collider)
     {
         AbilityModuleManager abilityManager = a_Collider.GetComponent<AbilityModuleManager>();

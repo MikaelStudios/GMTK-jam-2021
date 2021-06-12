@@ -9,10 +9,10 @@ public class AbilityDamageTrigger : MonoBehaviour {
     void OnTriggerEnter(Collider a_Collider)
     {
         ControlledCapsuleCollider controlledCapsuleCollider = a_Collider.GetComponent<ControlledCapsuleCollider>();
-        if (controlledCapsuleCollider == null)
+        if (!controlledCapsuleCollider)
             return;
         AbiltityUnlockManager abiltityUnlockManager = a_Collider.GetComponent<AbiltityUnlockManager>();
-        if(abiltityUnlockManager == null)
+        if(!abiltityUnlockManager)
             return;
         //Prevent damage state to be used if the collider is no-clipping
         if (!controlledCapsuleCollider.AreCollisionsActive())
