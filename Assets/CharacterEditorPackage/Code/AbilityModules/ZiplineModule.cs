@@ -14,7 +14,7 @@ public class ZiplineModule : GroundedControllerAbilityModule
     [SerializeField] float m_ZiplineClimbCoolDown = 0.0f;
     [SerializeField] bool m_CanReleaseZiplineWithInput = false;
     [SerializeField] bool m_CanJumpFromZipline = false;
-    [SerializeField] bool useUserInput;
+    [SerializeField] bool m_isCelingHang;
     float m_LastZiplineClimbTime;
     bool m_IsSkating;
     Zipline m_CurrentZipline;
@@ -67,8 +67,8 @@ public class ZiplineModule : GroundedControllerAbilityModule
             return;
         }
 
-        Vector3 travelSpeed = m_CurrentZipline.GetTravelVelocity(GetAttachPoint(), m_ControlledCollider.GetVelocity()) * (useUserInput ? GetDirInput("Move").m_ClampedInput.x : 1f);
-        Vector3 dir = useUserInput ? new Vector3(GetDirInput("Move").m_ClampedInput.x, 0, 0) : m_CurrentZipline.GetTravelDirection(GetAttachPoint(), travelSpeed);
+        Vector3 travelSpeed = m_CurrentZipline.GetTravelVelocity(GetAttachPoint(), m_ControlledCollider.GetVelocity());
+        Vector3 dir = m_CurrentZipline.GetTravelDirection(GetAttachPoint(), travelSpeed);
         Vector3 acceleration;
         if (travelSpeed.magnitude < m_MaxSpeed)
         {
@@ -88,14 +88,21 @@ public class ZiplineModule : GroundedControllerAbilityModule
             //We're probably being blocked by something, reset our forward velocity
             travelSpeed *= 0.0f;
         }
-
+        if (m_isCelingHang)
+        {
+            travelSpeed = Vector3.zero;
+            acceleration = Vector3.zero;
+        }
         m_ControlledCollider.UpdateWithVelocity(travelSpeed);
 
         //Clamp to the Zipline after we've moved
-        Vector3 position = GetAttachPoint();
-        Vector3 newPosition = m_CurrentZipline.GetClosestPointOnZipline(position);
-        SetAttachPoint(newPosition);
-        m_ControlledCollider.UpdateContextInfo();
+        if (!m_isCelingHang)
+        {
+            Vector3 position = GetAttachPoint();
+            Vector3 newPosition = m_CurrentZipline.GetClosestPointOnZipline(position);
+            SetAttachPoint(newPosition);
+            m_ControlledCollider.UpdateContextInfo();
+        }
     }
 
     //Called to place a MovingColPoint to support moving colliders
