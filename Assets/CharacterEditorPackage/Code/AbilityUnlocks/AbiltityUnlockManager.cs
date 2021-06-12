@@ -19,7 +19,7 @@ public class AbiltityUnlockManager : MonoBehaviour
             return;
         m_currentAbilities.Add(ability);
 
-        updateAbilities();
+        UpdateAbilities();
     }
 
     public void RemoveAbilityClass(AbilityClass ability)
@@ -27,7 +27,7 @@ public class AbiltityUnlockManager : MonoBehaviour
         if (!m_currentAbilities.Remove(ability))
             return;
         
-        updateAbilities();
+        UpdateAbilities();
     }
 
     public bool RemoveRandomAbilityClass()
@@ -40,13 +40,19 @@ public class AbiltityUnlockManager : MonoBehaviour
         return true;
     }
 
+    public void ClearAbilities()
+    {
+        m_currentAbilities.Clear();
+        UpdateAbilities();
+    }
+
     public void SetColor(Color m_color)
     {
         SpriteRenderer spriteRenderer = transform.Find("SpriteTransformBase").transform.Find("SpriteAnimator").GetComponent<SpriteRenderer>();
         spriteRenderer.color = m_color;
     }
 
-    void updateAbilities() {
+    void UpdateAbilities() {
         for (int i = 0; i < m_Rules.Count; i++)
         {
             AddedAbilityRule rule = m_Rules[i];
