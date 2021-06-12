@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 //--------------------------------------------------------------------
 //Dash module is a movement ability
 //--------------------------------------------------------------------
@@ -13,24 +11,34 @@ public class DashModule : GroundedControllerAbilityModule
     [SerializeField] bool m_ResetDashsAfterTouchingEdge = false;
     [SerializeField] bool m_OverridePreviousSpeed = false;
 
+    [SerializeField] int amountofdash = 1;
+
     float m_LastDashTime;
     bool m_HasDashedAndNotTouchedGroundYet;
+    int useddashes = 0;
     //Reset all state when this module gets initialized
-    protected override void ResetState(){
+    protected override void ResetState()
+    {
         base.ResetState();
         m_LastDashTime = Time.fixedTime - m_DashCooldown;
         m_HasDashedAndNotTouchedGroundYet = false;
+        useddashes = amountofdash;
     }
 
     //Called whenever this module is started (was inactive, now is active)
-    protected override void StartModuleImpl(){
+    protected override void StartModuleImpl()
+    {
         m_LastDashTime = Time.fixedTime;
-        m_HasDashedAndNotTouchedGroundYet = true;
+        useddashes--;
+        if (useddashes <= 0)
+            m_HasDashedAndNotTouchedGroundYet = true;
+
     }
 
     //Execute jump (lasts one update)
     //Called for every fixedupdate that this module is active
-    public override void FixedUpdateModule(){
+    public override void FixedUpdateModule()
+    {
         Vector2 direction = GetDirInput("Aim").m_ClampedInput.normalized;
 
         Vector2 currentVel = m_ControlledCollider.GetVelocity();
@@ -53,22 +61,23 @@ public class DashModule : GroundedControllerAbilityModule
            (m_ControlledCollider.IsTouchingEdge() && m_ResetDashsAfterTouchingEdge))
         {
             m_HasDashedAndNotTouchedGroundYet = false;
+            useddashes = amountofdash;
         }
     }
-
     public bool CanStartDash()
     {
-        if (Time.fixedTime - m_LastDashTime < m_DashCooldown || m_HasDashedAndNotTouchedGroundYet || !GetDirInput("Aim").HasSurpassedThreshold())
+        if (Time.fixedTime - m_LastDashTime < m_DashCooldown || m_HasDashedAndNotTouchedGroundYet || !GetDirInput("Aim").HasSurpassedThreshold() || useddashes <= 0)
         {
             return false;
         }
         return true;
     }
+
     //Query whether this module can be active, given the current state of the character controller (velocity, isGrounded etc.)
     //Called every frame when inactive (to see if it could be) and when active (to see if it should not be)
     public override bool IsApplicable()
     {
-        if (Time.fixedTime - m_LastDashTime < m_DashCooldown || m_HasDashedAndNotTouchedGroundYet)
+        if (Time.fixedTime - m_LastDashTime < m_DashCooldown || m_HasDashedAndNotTouchedGroundYet || useddashes <= 0)
         {
             return false;
         }
