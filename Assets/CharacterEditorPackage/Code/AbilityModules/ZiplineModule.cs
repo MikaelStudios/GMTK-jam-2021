@@ -15,6 +15,7 @@ public class ZiplineModule : GroundedControllerAbilityModule
     [SerializeField] bool m_CanReleaseZiplineWithInput = false;
     [SerializeField] bool m_CanJumpFromZipline = false;
     [SerializeField] bool m_isCelingHang;
+    [SerializeField] bool m_isUserInput;
     float m_LastZiplineClimbTime;
     bool m_IsSkating;
     Zipline m_CurrentZipline;
@@ -66,29 +67,33 @@ public class ZiplineModule : GroundedControllerAbilityModule
         {
             return;
         }
-
-        Vector3 travelSpeed = m_CurrentZipline.GetTravelVelocity(GetAttachPoint(), m_ControlledCollider.GetVelocity());
-        Vector3 dir = m_CurrentZipline.GetTravelDirection(GetAttachPoint(), travelSpeed);
-        Vector3 acceleration;
-        if (travelSpeed.magnitude < m_MaxSpeed)
+        Vector2 moveDir = GetDirInput("Move").m_ClampedInput * m_MaxSpeed;
+        Vector3 travelSpeed = m_isUserInput ? new Vector3(moveDir.x, moveDir.y, 0) : m_CurrentZipline.GetTravelVelocity(GetAttachPoint(), m_ControlledCollider.GetVelocity());
+        Vector3 dir = m_isUserInput ? new Vector3(GetDirInput("Move").m_ClampedInput.x, 0, 0) : m_CurrentZipline.GetTravelDirection(GetAttachPoint(), travelSpeed);
+        Vector3 acceleration = dir;
+        if (!m_isUserInput)
         {
-            acceleration = dir * m_DownhillAcceleration * Time.fixedDeltaTime;
-            if (dir.y > 0.0f)  //We're going uphill, so use our uphillacceleration (usually negative so that we start sliding down)
+            if (travelSpeed.magnitude < m_MaxSpeed)
             {
-                acceleration = dir * m_UphillAcceleration * Time.fixedDeltaTime;
+                acceleration = dir * m_DownhillAcceleration * Time.fixedDeltaTime;
+                if (dir.y > 0.0f)  //We're going uphill, so use our uphillacceleration (usually negative so that we start sliding down)
+                {
+                    acceleration = dir * m_UphillAcceleration * Time.fixedDeltaTime;
+                }
             }
+            else//We're going too fast, so let's slow down
+            {
+                acceleration = -dir * m_Deceleration * Time.fixedDeltaTime;
+            }
+            travelSpeed += acceleration;
         }
-        else//We're going too fast, so let's slow down
-        {
-            acceleration = -dir * m_Deceleration * Time.fixedDeltaTime;
-        }
-        travelSpeed += acceleration;
+
         if (!m_ControlledCollider.GetCapsuleTransform().CanMove(travelSpeed * Time.fixedDeltaTime))
         {
             //We're probably being blocked by something, reset our forward velocity
             travelSpeed *= 0.0f;
         }
-        if (m_isCelingHang)
+        if (m_isCelingHang && !m_isUserInput)
         {
             travelSpeed = Vector3.zero;
             acceleration = Vector3.zero;
