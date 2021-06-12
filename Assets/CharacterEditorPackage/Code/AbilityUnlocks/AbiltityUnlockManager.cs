@@ -18,7 +18,6 @@ public class AbiltityUnlockManager : MonoBehaviour
         if (m_currentAbilities.Contains(ability))
             return;
         m_currentAbilities.Add(ability);
-        Debug.Log("Added color " + ability.ToString());
 
         updateAbilities();
     }
@@ -27,7 +26,6 @@ public class AbiltityUnlockManager : MonoBehaviour
     {
         if (!m_currentAbilities.Remove(ability))
             return;
-        Debug.Log("Removed color " + ability.ToString());
         
         updateAbilities();
     }
@@ -46,7 +44,6 @@ public class AbiltityUnlockManager : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = transform.Find("SpriteTransformBase").transform.Find("SpriteAnimator").GetComponent<SpriteRenderer>();
         spriteRenderer.color = m_color;
-        print(spriteRenderer.color.ToString());
     }
 
     void updateAbilities() {
@@ -55,7 +52,6 @@ public class AbiltityUnlockManager : MonoBehaviour
             AddedAbilityRule rule = m_Rules[i];
             if (rule.abilities.All(m_currentAbilities.Contains))
             {
-                Debug.Log("Applied rule " + rule.m_RuleName);
                 abilityManager.ApplyAbilityUnlockList(rule.abilityUnlock);
                 SetColor(rule.newColor.color);
                 rule.UnlockEvent?.Invoke();
