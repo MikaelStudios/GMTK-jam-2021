@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 //--------------------------------------------------------------------
 //WallJump module is a movement ability
 //When a wall is detected, and the appropriate input is given, jump away from the wall
@@ -14,18 +12,25 @@ public class WallJumpModule : GroundedControllerAbilityModule
     [SerializeField] bool m_ResetVerticalSpeedIfFalling = false;
     [SerializeField] float m_VerticalVelocityInheritanceFactor = 0.0f;
     [SerializeField] float m_HorizontalVelocityInheritanceFactor = 0.0f;
-
+    [SerializeField] AudioClip Audio;
     Vector2 m_SideNormal;
 
     //Reset all state when this module gets initialized
-    protected override void ResetState(){
+    protected override void ResetState()
+    {
         base.ResetState();
         m_SideNormal = Vector2.zero;
     }
-
+    protected override void StartModuleImpl()
+    {
+        base.StartModuleImpl();
+        if (GameManager.Instance && Audio)
+            GameManager.Instance.audioSource.PlayOneShot(Audio);
+    }
     //Execute jump (lasts one update)
     //Called for every fixedupdate that this module is active
-    public override void FixedUpdateModule(){
+    public override void FixedUpdateModule()
+    {
         Vector2 currentVel = m_ControlledCollider.GetVelocity();
         //Make sure that current velocity is aligned to the side wall
         currentVel = CState.GetDirectionAlongNormal(currentVel, m_SideNormal) * currentVel.magnitude;
@@ -48,7 +53,8 @@ public class WallJumpModule : GroundedControllerAbilityModule
 
     //Query whether this module can be active, given the current state of the character controller (velocity, isGrounded etc.)
     //Called every frame when inactive (to see if it could be) and when active (to see if it should not be)
-    public override bool IsApplicable(){
+    public override bool IsApplicable()
+    {
         if (m_ControlledCollider.IsGrounded())
         {
             return false;
@@ -73,7 +79,8 @@ public class WallJumpModule : GroundedControllerAbilityModule
     }
 
     //Get the name of the animation state that should be playing for this module. 
-    public override string GetSpriteState(){
+    public override string GetSpriteState()
+    {
         return "JumpSide";
     }
 }

@@ -15,7 +15,7 @@ public class DashModule : GroundedControllerAbilityModule
     [SerializeField] float m_FalloffDuration = 0.0f;
 
     [SerializeField] int amountofdash = 1;
-
+    [SerializeField] AudioClip Audio;
     float m_DashCountdown = 0.0f;
     bool m_HasDashedAndNotTouchedGroundYet;
     int useddashes = 0;
@@ -41,8 +41,10 @@ public class DashModule : GroundedControllerAbilityModule
         useddashes--;
         if (useddashes <= 0)
             m_HasDashedAndNotTouchedGroundYet = true;
-        if(m_DisableGravity)
+        if (m_DisableGravity)
             m_CharacterController.Gravity = 0.0f;
+        if (GameManager.Instance && Audio)
+            GameManager.Instance.audioSource.PlayOneShot(Audio);
     }
 
     //Execute jump (lasts one update)
@@ -66,7 +68,7 @@ public class DashModule : GroundedControllerAbilityModule
     //Called whenever this module is inactive and updating (implementation by child modules), useful for cooldown updating etc.
     public override void InactiveUpdateModule()
     {
-        if(m_DashCountdown > -m_FalloffDuration)
+        if (m_DashCountdown > -m_FalloffDuration)
         {
             m_DashCountdown -= Time.fixedDeltaTime;
         }
@@ -82,12 +84,12 @@ public class DashModule : GroundedControllerAbilityModule
             useddashes = amountofdash;
         }
 
-        
-        if(m_DashFalloff && (m_DashCountdown < 0.0f) && (m_DashCountdown > -m_FalloffDuration))
+
+        if (m_DashFalloff && (m_DashCountdown < 0.0f) && (m_DashCountdown > -m_FalloffDuration))
         {
             Vector2 currentVel = m_ControlledCollider.GetVelocity();
-            float factor = 1 + (m_DashCountdown/m_FalloffDuration); // At this point the cooldown is negative!
-            
+            float factor = 1 + (m_DashCountdown / m_FalloffDuration); // At this point the cooldown is negative!
+
             currentVel *= factor;
 
             m_ControlledCollider.UpdateWithVelocity(currentVel);

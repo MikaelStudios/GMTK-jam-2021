@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 //--------------------------------------------------------------------
 //DoubleJump module is a movement ability
 //When in the air, allow more jumps
@@ -13,7 +11,7 @@ public class DoubleJumpModule : GroundedControllerAbilityModule
 
     [SerializeField] bool m_ResetDoubleJumpsAfterTouchingWall = false;
     [SerializeField] bool m_ResetDoubleJumpsAfterTouchingEdge = false;
-
+    [SerializeField] AudioClip Audio;
     int m_DoubleJumpsLeft;
 
     //Reset all state when this module gets initialized
@@ -21,12 +19,21 @@ public class DoubleJumpModule : GroundedControllerAbilityModule
     {
         base.ResetState();
         m_DoubleJumpsLeft = m_AmountOfDoubleJumpsAllowed;
-    }
 
+    }
+    private void Start()
+    {
+        m_CharacterController.OnJump += () =>
+        {
+            if (GameManager.Instance && Audio)
+                GameManager.Instance.audioSource.PlayOneShot(Audio);
+        };
+    }
     //Called whenever this module is started (was inactive, now is active)
     protected override void StartModuleImpl()
     {
         m_DoubleJumpsLeft -= 1;
+
     }
 
     //Execute jump (lasts one update)

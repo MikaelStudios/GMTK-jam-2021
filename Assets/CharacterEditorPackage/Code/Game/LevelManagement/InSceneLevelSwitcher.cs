@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 //--------------------------------------------------------------------
 //InSceneLevelSwitcher keeps track of spawnpoints and respawning
 //Switches camera to te one used in that level
 //--------------------------------------------------------------------
-public class InSceneLevelSwitcher : MonoBehaviour {
+public class InSceneLevelSwitcher : MonoBehaviour
+{
     //Level start event (for other scripts to use when the level is changed)
     public delegate void OnLevelStartEvent();
     public static event OnLevelStartEvent OnLevelStart;
@@ -16,7 +16,7 @@ public class InSceneLevelSwitcher : MonoBehaviour {
     [SerializeField] int m_ButtonsPerRow = 0;
     [SerializeField] Transform m_Camera = null;
     int m_CurrentIndex;
-    
+
     static InSceneLevelSwitcher g_InSceneLevelSwitcher;
     public static InSceneLevelSwitcher Get()
     {
@@ -30,17 +30,17 @@ public class InSceneLevelSwitcher : MonoBehaviour {
         }
         return g_InSceneLevelSwitcher;
     }
-	void Start () 
-	{
-		StartLevel(0);
+    void Start()
+    {
+        StartLevel(0);
         CorrectCamera();
-	}
-
+    }
+#if UNITY_EDITOR
     void OnGUI()
     {
-        if(!m_ShowButtons)
+        if (!m_ShowButtons)
             return;
-        for (int i = 0; i < m_Levels.Length; i ++)
+        for (int i = 0; i < m_Levels.Length; i++)
         {
             int xIndex = (i) % (m_ButtonsPerRow);
             int yIndex = i / m_ButtonsPerRow;
@@ -48,14 +48,14 @@ public class InSceneLevelSwitcher : MonoBehaviour {
             int yPos = yIndex * m_ButtonSize;
 
             int index = i;
-            if (GUI.Button(new Rect(xPos, yPos, m_ButtonSize, m_ButtonSize), (index+1).ToString()))
+            if (GUI.Button(new Rect(xPos, yPos, m_ButtonSize, m_ButtonSize), (index + 1).ToString()))
             {
                 StartLevel(index);
                 CorrectCamera();
             }
         }
     }
-
+#endif
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
@@ -74,7 +74,7 @@ public class InSceneLevelSwitcher : MonoBehaviour {
         StartLevel(m_CurrentIndex);
         CorrectCamera();
     }
-    
+
     void CorrectCamera()
     {
         Vector3 diff = m_Character.transform.position - m_Camera.transform.position;
@@ -89,10 +89,10 @@ public class InSceneLevelSwitcher : MonoBehaviour {
             return;
         }
         m_Character.SpawnAndResetAtPosition(m_Levels[a_Index].m_StartPoint.position);
-		m_CurrentIndex = a_Index;
+        m_CurrentIndex = a_Index;
         if (OnLevelStart != null)
         {
             OnLevelStart();
-        }    
+        }
     }
 }
