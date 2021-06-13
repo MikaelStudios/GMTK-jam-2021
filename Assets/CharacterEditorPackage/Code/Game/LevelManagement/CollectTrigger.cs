@@ -5,9 +5,14 @@ using UnityEngine.Events;
 
 public class CollectTrigger : MonoBehaviour
 {
-    [SerializeField] AudioSource m_AudioSource = null;
     [SerializeField] AudioClip[] m_CollectSounds;
     [SerializeField] UnityEvent m_CollectEvent;
+
+    AudioSource m_AudioSource = null;
+
+    void Start() {
+        m_AudioSource = GameManager.Instance.audioSource;
+    }
 
     void OnTriggerEnter(Collider a_Collider) {
         if(a_Collider.gameObject.layer == 31)
