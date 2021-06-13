@@ -1,5 +1,7 @@
 Release
 Temp
+[Bb]uild/
+[Bb]uilds/
 Library/ShaderCache
 *.rej
 .DS_Store
