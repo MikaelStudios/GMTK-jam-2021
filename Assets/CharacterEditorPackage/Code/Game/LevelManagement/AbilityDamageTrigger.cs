@@ -17,7 +17,6 @@ public class AbilityDamageTrigger : MonoBehaviour {
         //Prevent damage state to be used if the collider is no-clipping
         if (!controlledCapsuleCollider.AreCollisionsActive())
             return;
-        Debug.Log("Damage triggered by: " + transform.name);
 
         //Returns false if no ability is left
         if(abiltityUnlockManager.RemoveRandomAbilityClass())
@@ -28,7 +27,6 @@ public class AbilityDamageTrigger : MonoBehaviour {
         }
         else
         {
-            Debug.Log("Player killed!");
             if (InSceneLevelSwitcher.Get())
             {
                 InSceneLevelSwitcher.Get().Respawn();
