@@ -26,7 +26,7 @@ public class DoubleJumpModule : GroundedControllerAbilityModule
         m_CharacterController.OnJump += () =>
         {
             if (GameManager.Instance && Audio)
-                GameManager.Instance.audioSource.PlayOneShot(Audio);
+                GameManager.Instance.audioSource.PlayOneShot(Audio, 0.3f);
         };
     }
     //Called whenever this module is started (was inactive, now is active)

@@ -44,7 +44,7 @@ public class DashModule : GroundedControllerAbilityModule
         if (m_DisableGravity)
             m_CharacterController.Gravity = 0.0f;
         if (GameManager.Instance && Audio)
-            GameManager.Instance.audioSource.PlayOneShot(Audio);
+            GameManager.Instance.audioSource.PlayOneShot(Audio, 0.7f);
     }
 
     //Execute jump (lasts one update)
