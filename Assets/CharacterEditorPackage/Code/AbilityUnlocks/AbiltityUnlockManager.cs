@@ -34,8 +34,7 @@ public class AbiltityUnlockManager : MonoBehaviour
     {
         if(m_currentAbilities.Count == 0)
             return false; // No more abilities could be removed
-        System.Random rng = new System.Random();
-        int idx = rng.Next(m_currentAbilities.Count);
+        int idx = Random.Range(0, m_currentAbilities.Count);
         RemoveAbilityClass(m_currentAbilities[idx]);
         return true;
     }
