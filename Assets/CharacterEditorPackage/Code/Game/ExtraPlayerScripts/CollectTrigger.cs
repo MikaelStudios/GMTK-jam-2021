@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class CollectTrigger : MonoBehaviour
 {
-    [SerializeField] private AudioSource m_AudioSource;
+    [SerializeField] private AudioSource m_AudioSource = null;
     [SerializeField] private AudioClip[] m_CollectSounds;
     [SerializeField] public UnityEvent m_CollectEvent;
 
@@ -18,7 +18,10 @@ public class CollectTrigger : MonoBehaviour
     }
 
     void Collect() {
-        m_AudioSource?.PlayOneShot(m_CollectSounds[Random.Range(0, m_CollectSounds.Length)], Random.Range(.6f, 1f));
+        if(m_AudioSource && m_CollectSounds.Length > 0) 
+        {
+            m_AudioSource.PlayOneShot(m_CollectSounds[Random.Range(0, m_CollectSounds.Length)], Random.Range(.6f, 1f));
+        }
         m_CollectEvent?.Invoke();
 
         gameObject.SetActive(false);
