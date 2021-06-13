@@ -16,6 +16,11 @@ public class DashModule : GroundedControllerAbilityModule
     float m_LastDashTime;
     bool m_HasDashedAndNotTouchedGroundYet;
     int useddashes = 0;
+    float originalGravity;
+    private void Start()
+    {
+        originalGravity = m_CharacterController.Gravity;
+    }
     //Reset all state when this module gets initialized
     protected override void ResetState()
     {
@@ -23,6 +28,7 @@ public class DashModule : GroundedControllerAbilityModule
         m_LastDashTime = Time.fixedTime - m_DashCooldown;
         m_HasDashedAndNotTouchedGroundYet = false;
         useddashes = amountofdash;
+        //m_CharacterController.Gravity = originalGravity;
     }
 
     //Called whenever this module is started (was inactive, now is active)
@@ -32,6 +38,7 @@ public class DashModule : GroundedControllerAbilityModule
         useddashes--;
         if (useddashes <= 0)
             m_HasDashedAndNotTouchedGroundYet = true;
+        m_CharacterController.Gravity = 0;
 
     }
 
@@ -56,10 +63,13 @@ public class DashModule : GroundedControllerAbilityModule
     //Called whenever this module is inactive and updating (implementation by child modules), useful for cooldown updating etc.
     public override void InactiveUpdateModule()
     {
+        if (Time.fixedTime - m_LastDashTime < m_DashCooldown)
+            m_CharacterController.Gravity = originalGravity;
         if (m_ControlledCollider.IsGrounded() ||
            (m_ControlledCollider.IsPartiallyTouchingWall() && m_ResetDashsAfterTouchingWall) ||
            (m_ControlledCollider.IsTouchingEdge() && m_ResetDashsAfterTouchingEdge))
         {
+
             m_HasDashedAndNotTouchedGroundYet = false;
             useddashes = amountofdash;
         }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 //--------------------------------------------------------------------
 //GroundedCharacterController is an CharacterControllerBase which implements the core of a platforming character.
 //It is the CharacterControllerBase used for all the character controllers
@@ -21,7 +20,7 @@ public class GroundedCharacterController : CharacterControllerBase
     [SerializeField] bool m_ApplyGravityIntoGroundNormal = false;
     [SerializeField] float m_FrictionConstant = 0.0f;
     [SerializeField] bool m_AlignRotationToGroundedNormal = false;
-//Jumping values
+    //Jumping values
     [SerializeField] float m_JumpVelocity = 0.0f;
     [SerializeField] float m_JumpCutVelocity = 0.0f;
     [SerializeField] float m_MinAllowedJumpCutVelocity = 0.0f;
@@ -38,11 +37,13 @@ public class GroundedCharacterController : CharacterControllerBase
     float m_LastTouchingSurfaceTime;
 
     Vector2 m_LastGroundedNormal;
-//Jump event (for other scripts to use when the jump is triggered)
+    //Jump event (for other scripts to use when the jump is triggered)
     public delegate void OnJumpEvent();
     public event OnJumpEvent OnJump;
 
     protected ButtonInput m_JumpInput;
+
+    public float Gravity { get => m_Gravity; set => m_Gravity = value; }
 
     //Called by Unity upon adding a new component to an object, or when Reset is selected in the context menu. Used here to provide default values.
     //Also used when fixing up components using the CharacterFixEditor button
@@ -82,11 +83,11 @@ public class GroundedCharacterController : CharacterControllerBase
         }
 
         if (m_ControlledCollider.GetSideCastInfo().m_HasHitSide)
-        { 
+        {
             m_LastTouchingSurfaceTime = Time.fixedTime;
         }
         if (m_JumpInput != null)
-        { 
+        {
             if (m_JumpInput.m_WasJustPressed)
             {
                 m_JumpInput.m_WasJustPressed = false;
@@ -207,7 +208,7 @@ public class GroundedCharacterController : CharacterControllerBase
             OnJump();
         }
     }
-    
+
     public void LaunchCharacter(Vector2 a_LaunchVelocity, bool a_OverridePreviousVelocity = true)
     {
         Vector2 newVelocity = m_ControlledCollider.GetVelocity();
@@ -243,7 +244,7 @@ public class GroundedCharacterController : CharacterControllerBase
     {
         base.SetPlayerInput(a_PlayerInput);
         if (a_PlayerInput.GetButton("Jump") != null)
-        { 
+        {
             m_JumpInput = a_PlayerInput.GetButton("Jump");
         }
         else
@@ -299,14 +300,14 @@ public class GroundedCharacterController : CharacterControllerBase
     }
 
     public float GetInputForceApplyLimit()
-    { 
+    {
         if (m_ControlledCollider.IsGrounded())
         {
             return m_WalkForceApplyLimit;
         }
         else
         {
-           return m_AirForceApplyLimit;
+            return m_AirForceApplyLimit;
         }
     }
 
@@ -340,7 +341,7 @@ public class GroundedCharacterController : CharacterControllerBase
         if (m_ControlledCollider.IsGrounded())
         {
             CGroundedInfo groundedInfo = m_ControlledCollider.GetGroundedInfo();
-            
+
             Vector2 direction = -groundedInfo.GetWalkDirection(a_Velocity); //Opposite direction of velocity
             Vector2 maxFrictionSpeedChange = direction * a_FrictionConstant * Time.fixedDeltaTime;
 
@@ -434,7 +435,7 @@ public class GroundedCharacterController : CharacterControllerBase
                     return "Dangling";
                 }
                 else
-                { 
+                {
                     return "Idle";
                 }
             }
@@ -444,7 +445,7 @@ public class GroundedCharacterController : CharacterControllerBase
             if (m_ControlledCollider.GetVelocity().y > 0)
             {
                 if (DidJustJump())
-                { 
+                {
                     if (Mathf.Abs(m_ControlledCollider.GetVelocity().x) < 0.0001f)
                     {
                         return "JumpStraight";
@@ -474,7 +475,7 @@ public class GroundedCharacterController : CharacterControllerBase
                 }
                 else
                 {
-                    return "FallSide"; 
+                    return "FallSide";
                 }
             }
         }
